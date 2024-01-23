@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: grey;
+            background-image: url("https://images.pexels.com/photos/2684011/pexels-photo-2684011.jpeg?auto=compress&cs=tinysrgb&w=600");
+            background-repeat: no-repeat;
+            background-size: cover;
+            
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: skyblue;
+            color: white;
+        }
+
+        .container {
+            max-width: 600px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            margin: 20px;
+            line-height: 30px;
+            margin-left: 450px;
+            
+            
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+            color: white;
+            background-color: green;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        h4{
+            color: red;
+        }
+        .btn{
+            color: white;
+            background-color: black;
+        }
+    </style>
+    <title>Energy Tracking Platform</title>
+</head>
+<body>
+
+    <header>
+        <h1>Energy Tracking Platform</h1>
+    </header>
+
+    <div class="container">
+        <form id="energyForm">
+            <label for="appliance">Appliance (Tv,fan):</label>
+            <input type="text" id="appliance" required><br>
+            <label for="power">Power Consumption (Watts):</label>
+            <input type="number" id="power" required><br>
+            <label for="duration">Duration of Use (hours):</label>
+            <input type="number" id="duration" required><br>
+           <center> <button type="button" onclick="trackEnergy()" class="btn">Calculate</button>
+            <button type="button" onclick="resetForm()">Reset</button>
+        </center>
+           
+        </form>
+
+        <table id="energyTable">
+            <tr>
+                <th>Appliance</th>
+                <th>Power Consumption (Watts)</th>
+                <th>Duration of Use (hours)</th>
+                <th>Energy Consumption (kWh)</th>
+            </tr>
+        </table>
+
+        <p>Total Energy Consumption: <span id="totalEnergy">0 kWh</span></p>
+        <center><h4>Thank You !</h4></center>
+    </div>
+
+    <script>
+        class EnergyTrackingPlatform {
+            constructor() {
+                this.appliances = [];
+            }
+
+            trackEnergy(appliance, power, duration) {
+                const energyConsumption = (power * duration) / 1000;
+                this.appliances.push({ appliance, power, duration, energyConsumption });
+                updateTable();
+                updateTotalEnergy();
+            }
+        }
+
+        const platform = new EnergyTrackingPlatform();
+
+        function trackEnergy() {
+            const appliance = document.getElementById('appliance').value;
+            const power = parseFloat(document.getElementById('power').value);
+            const duration = parseFloat(document.getElementById('duration').value);
+
+            if (!isNaN(power) && !isNaN(duration)) {
+                platform.trackEnergy(appliance, power, duration);
+            } else {
+                alert("Invalid input. Please enter valid numbers.");
+            }
+        }
+
+        function updateTable() {
+            const energyTable = document.getElementById('energyTable');
+            
+            while (energyTable.rows.length > 1) {
+                energyTable.deleteRow(1);
+            }
+            
+            for (const applianceData of platform.appliances) {
+                const row = energyTable.insertRow(-1);
+                const cell1 = row.insertCell(0);
+                const cell2 = row.insertCell(1);
+                const cell3 = row.insertCell(2);
+                const cell4 = row.insertCell(3);
+                cell1.textContent = applianceData.appliance;
+                cell2.textContent = applianceData.power;
+                cell3.textContent = applianceData.duration;
+                cell4.textContent = applianceData.energyConsumption.toFixed(2);
+            }
+        }
+
+        function updateTotalEnergy() {
+            const totalEnergySpan = document.getElementById('totalEnergy');
+            const totalEnergy = platform.appliances.reduce((total, appliance) => total + appliance.energyConsumption, 0);
+            totalEnergySpan.textContent = totalEnergy.toFixed(2) + " kWh";
+        }
+        
+        function resetForm() {
+            
+            document.getElementById('appliance').value = '';
+            document.getElementById('power').value = '';
+            document.getElementById('duration').value = '';
+
+           const energyTable = document.getElementById('energyTable');
+            while (energyTable.rows.length > 1) {
+                energyTable.deleteRow(1);
+            }
+
+            updateTotalEnergy();
+        }
+        
+    </script>
+
+</body>
+</html>
